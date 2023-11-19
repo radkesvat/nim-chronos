@@ -17,11 +17,6 @@ export srcloc
 when chronosStackTrace:
   type StackTrace = string
 
-when chronosStrictException:
-  {.pragma: closureIter, raises: [CatchableError], gcsafe.}
-else:
-  {.pragma: closureIter, raises: [Exception], gcsafe.}
-
 type
   LocationKind* {.pure.} = enum
     Create
@@ -54,7 +49,7 @@ type
     internalState*: FutureState
     internalFlags*: FutureFlags
     internalError*: ref CatchableError ## Stored exception
-    internalClosure*: iterator(f: FutureBase): FutureBase {.closureIter.}
+    internalClosure*: iterator(f: FutureBase): FutureBase {.raises: [], gcsafe.}
 
     when chronosFutureId:
       internalId*: uint
@@ -78,9 +73,14 @@ type
     cause*: FutureBase
 
   FutureError* = object of CatchableError
+    future*: FutureBase
 
   CancelledError* = object of FutureError
     ## Exception raised when accessing the value of a cancelled future
+
+func raiseFutureDefect(msg: static string, fut: FutureBase) {.
+    noinline, noreturn.} =
+  raise (ref FutureDefect)(msg: msg, cause: fut)
 
 when chronosFutureId:
   var currentID* {.threadvar.}: uint
@@ -207,13 +207,11 @@ func value*[T: not void](future: Future[T]): lent T =
   ## Return the value in a completed future - raises Defect when
   ## `fut.completed()` is `false`.
   ##
-  ## See `read` for a version that raises an catchable error when future
+  ## See `read` for a version that raises a catchable error when future
   ## has not completed.
   when chronosStrictFutureAccess:
     if not future.completed():
-      raise (ref FutureDefect)(
-        msg: "Future not completed while accessing value",
-        cause: future)
+      raiseFutureDefect("Future not completed while accessing value", future)
 
   future.internalValue
 
@@ -221,13 +219,11 @@ func value*(future: Future[void]) =
   ## Return the value in a completed future - raises Defect when
   ## `fut.completed()` is `false`.
   ##
-  ## See `read` for a version that raises an catchable error when future
+  ## See `read` for a version that raises a catchable error when future
   ## has not completed.
   when chronosStrictFutureAccess:
     if not future.completed():
-      raise (ref FutureDefect)(
-        msg: "Future not completed while accessing value",
-        cause: future)
+      raiseFutureDefect("Future not completed while accessing value", future)
 
 func error*(future: FutureBase): ref CatchableError =
   ## Return the error of `future`, or `nil` if future did not fail.
@@ -236,9 +232,8 @@ func error*(future: FutureBase): ref CatchableError =
   ## future has not failed.
   when chronosStrictFutureAccess:
     if not future.failed() and not future.cancelled():
-      raise (ref FutureDefect)(
-        msg: "Future not failed/cancelled while accessing error",
-        cause: future)
+      raiseFutureDefect(
+        "Future not failed/cancelled while accessing error", future)
 
   future.internalError
 

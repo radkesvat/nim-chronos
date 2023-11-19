@@ -6,8 +6,8 @@
 #                Licensed under either of
 #    Apache License, version 2.0, (LICENSE-APACHEv2)
 #                MIT license (LICENSE-MIT)
-import stew/results
-import osdefs, oserrno
+import results
+import "."/[osdefs, oserrno]
 
 export results
 
@@ -345,6 +345,10 @@ else:
       if handleEintr(osdefs.fcntl(s, osdefs.F_SETFL, mode)) == -1:
         return err(osLastError())
     ok()
+
+  proc setDescriptorBlocking*(s: SocketHandle,
+                              value: bool): Result[void, OSErrorCode] =
+    setDescriptorBlocking(cint(s), value)
 
   proc setDescriptorInheritance*(s: cint,
                                  value: bool): Result[void, OSErrorCode] =

@@ -122,6 +122,7 @@ when defined(windows):
     SO_UPDATE_ACCEPT_CONTEXT* = 0x700B
     SO_CONNECT_TIME* = 0x700C
     SO_UPDATE_CONNECT_CONTEXT* = 0x7010
+    SO_PROTOCOL_INFOW* = 0x2005
 
     FILE_FLAG_FIRST_PIPE_INSTANCE* = 0x00080000'u32
     FILE_FLAG_OPEN_NO_RECALL* = 0x00100000'u32
@@ -260,6 +261,9 @@ when defined(windows):
     FIONBIO* = WSAIOW(102, 126)
 
     HANDLE_FLAG_INHERIT* = 1'u32
+    IPV6_V6ONLY* = 27
+    MAX_PROTOCOL_CHAIN* = 7
+    WSAPROTOCOL_LEN* = 255
 
   type
     LONG* = int32
@@ -442,6 +446,32 @@ when defined(windows):
     IPADDRESS_PREFIX* {.final, pure.} = object
       prefix*: SOCKADDR_INET
       prefixLength*: uint8
+
+    WSAPROTOCOLCHAIN* {.final, pure.} = object
+      chainLen*: int32
+      chainEntries*: array[MAX_PROTOCOL_CHAIN, DWORD]
+
+    WSAPROTOCOL_INFO* {.final, pure.} = object
+      dwServiceFlags1*: uint32
+      dwServiceFlags2*: uint32
+      dwServiceFlags3*: uint32
+      dwServiceFlags4*: uint32
+      dwProviderFlags*: uint32
+      providerId*: GUID
+      dwCatalogEntryId*: DWORD
+      protocolChain*: WSAPROTOCOLCHAIN
+      iVersion*: int32
+      iAddressFamily*: int32
+      iMaxSockAddr*: int32
+      iMinSockAddr*: int32
+      iSocketType*: int32
+      iProtocol*: int32
+      iProtocolMaxOffset*: int32
+      iNetworkByteOrder*: int32
+      iSecurityScheme*: int32
+      dwMessageSize*: uint32
+      dwProviderReserved*: uint32
+      szProtocol*: array[WSAPROTOCOL_LEN + 1, WCHAR]
 
     MibIpForwardRow2* {.final, pure.} = object
       interfaceLuid*: uint64
@@ -892,7 +922,7 @@ elif defined(macos) or defined(macosx):
                         O_NONBLOCK, SOL_SOCKET, SOCK_RAW, SOCK_DGRAM,
                         SOCK_STREAM, MSG_NOSIGNAL, MSG_PEEK,
                         AF_INET, AF_INET6, AF_UNIX, SO_ERROR, SO_REUSEADDR,
-                        SO_REUSEPORT, SO_BROADCAST, IPPROTO_IP,
+                        SO_REUSEPORT, SO_BROADCAST, IPPROTO_IP, IPPROTO_IPV6,
                         IPV6_MULTICAST_HOPS, SOCK_DGRAM, RLIMIT_NOFILE,
                         SIG_BLOCK, SIG_UNBLOCK, SHUT_RD, SHUT_WR, SHUT_RDWR,
                         SIGHUP, SIGINT, SIGQUIT, SIGILL, SIGTRAP, SIGABRT,
@@ -917,7 +947,7 @@ elif defined(macos) or defined(macosx):
          O_NONBLOCK, SOL_SOCKET, SOCK_RAW, SOCK_DGRAM,
          SOCK_STREAM, MSG_NOSIGNAL, MSG_PEEK,
          AF_INET, AF_INET6, AF_UNIX, SO_ERROR, SO_REUSEADDR,
-         SO_REUSEPORT, SO_BROADCAST, IPPROTO_IP,
+         SO_REUSEPORT, SO_BROADCAST, IPPROTO_IP, IPPROTO_IPV6,
          IPV6_MULTICAST_HOPS, SOCK_DGRAM, RLIMIT_NOFILE,
          SIG_BLOCK, SIG_UNBLOCK, SHUT_RD, SHUT_WR, SHUT_RDWR,
          SIGHUP, SIGINT, SIGQUIT, SIGILL, SIGTRAP, SIGABRT,
@@ -979,7 +1009,8 @@ elif defined(linux):
                         SOL_SOCKET, SO_ERROR, RLIMIT_NOFILE, MSG_NOSIGNAL,
                         MSG_PEEK,
                         AF_INET, AF_INET6, AF_UNIX, SO_REUSEADDR, SO_REUSEPORT,
-                        SO_BROADCAST, IPPROTO_IP, IPV6_MULTICAST_HOPS,
+                        SO_BROADCAST, IPPROTO_IP, IPPROTO_IPV6,
+                        IPV6_MULTICAST_HOPS,
                         SOCK_DGRAM, SOCK_STREAM, SHUT_RD, SHUT_WR, SHUT_RDWR,
                         POLLIN, POLLOUT, POLLERR, POLLHUP, POLLNVAL,
                         SIGHUP, SIGINT, SIGQUIT, SIGILL, SIGTRAP, SIGABRT,
@@ -1007,7 +1038,7 @@ elif defined(linux):
          SOL_SOCKET, SO_ERROR, RLIMIT_NOFILE, MSG_NOSIGNAL,
          MSG_PEEK,
          AF_INET, AF_INET6, AF_UNIX, SO_REUSEADDR, SO_REUSEPORT,
-         SO_BROADCAST, IPPROTO_IP, IPV6_MULTICAST_HOPS,
+         SO_BROADCAST, IPPROTO_IP, IPPROTO_IPV6, IPV6_MULTICAST_HOPS,
          SOCK_DGRAM, SOCK_STREAM, SHUT_RD, SHUT_WR, SHUT_RDWR,
          POLLIN, POLLOUT, POLLERR, POLLHUP, POLLNVAL,
          SIGHUP, SIGINT, SIGQUIT, SIGILL, SIGTRAP, SIGABRT,
@@ -1129,7 +1160,7 @@ elif defined(freebsd) or defined(openbsd) or defined(netbsd) or
                         O_NONBLOCK, SOL_SOCKET, SOCK_RAW, SOCK_DGRAM,
                         SOCK_STREAM, MSG_NOSIGNAL, MSG_PEEK,
                         AF_INET, AF_INET6, AF_UNIX, SO_ERROR, SO_REUSEADDR,
-                        SO_REUSEPORT, SO_BROADCAST, IPPROTO_IP,
+                        SO_REUSEPORT, SO_BROADCAST, IPPROTO_IP, IPPROTO_IPV6,
                         IPV6_MULTICAST_HOPS, SOCK_DGRAM, RLIMIT_NOFILE,
                         SIG_BLOCK, SIG_UNBLOCK, CLOCK_MONOTONIC,
                         SHUT_RD, SHUT_WR, SHUT_RDWR,
@@ -1156,7 +1187,7 @@ elif defined(freebsd) or defined(openbsd) or defined(netbsd) or
          O_NONBLOCK, SOL_SOCKET, SOCK_RAW, SOCK_DGRAM,
          SOCK_STREAM, MSG_NOSIGNAL, MSG_PEEK,
          AF_INET, AF_INET6, AF_UNIX, SO_ERROR, SO_REUSEADDR,
-         SO_REUSEPORT, SO_BROADCAST, IPPROTO_IP,
+         SO_REUSEPORT, SO_BROADCAST, IPPROTO_IP, IPPROTO_IPV6,
          IPV6_MULTICAST_HOPS, SOCK_DGRAM, RLIMIT_NOFILE,
          SIG_BLOCK, SIG_UNBLOCK, CLOCK_MONOTONIC,
          SHUT_RD, SHUT_WR, SHUT_RDWR,
@@ -1184,47 +1215,52 @@ when defined(linux):
     SOCK_CLOEXEC* = 0x80000
     TCP_NODELAY* = cint(1)
     IPPROTO_TCP* = 6
-elif defined(freebsd) or defined(netbsd) or defined(dragonfly):
+    O_CLOEXEC* = 0x80000
+    POSIX_SPAWN_USEVFORK* = 0x40
+    IPV6_V6ONLY* = 26
+elif defined(freebsd):
   const
     SOCK_NONBLOCK* = 0x20000000
     SOCK_CLOEXEC* = 0x10000000
     TCP_NODELAY* = cint(1)
     IPPROTO_TCP* = 6
+    O_CLOEXEC* = 0x00100000
+    POSIX_SPAWN_USEVFORK* = 0x00
+    IPV6_V6ONLY* = 27
+elif defined(netbsd):
+  const
+    SOCK_NONBLOCK* = 0x20000000
+    SOCK_CLOEXEC* = 0x10000000
+    TCP_NODELAY* = cint(1)
+    IPPROTO_TCP* = 6
+    O_CLOEXEC* = 0x00400000
+    POSIX_SPAWN_USEVFORK* = 0x00
+    IPV6_V6ONLY* = 27
+elif defined(dragonfly):
+  const
+    SOCK_NONBLOCK* = 0x20000000
+    SOCK_CLOEXEC* = 0x10000000
+    TCP_NODELAY* = cint(1)
+    IPPROTO_TCP* = 6
+    O_CLOEXEC* = 0x00020000
+    POSIX_SPAWN_USEVFORK* = 0x00
+    IPV6_V6ONLY* = 27
 elif defined(openbsd):
   const
     SOCK_CLOEXEC* = 0x8000
     SOCK_NONBLOCK* = 0x4000
     TCP_NODELAY* = cint(1)
     IPPROTO_TCP* = 6
+    O_CLOEXEC* = 0x10000
+    POSIX_SPAWN_USEVFORK* = 0x00
+    IPV6_V6ONLY* = 27
 elif defined(macos) or defined(macosx):
   const
     TCP_NODELAY* = cint(1)
     IP_MULTICAST_TTL* = cint(10)
     IPPROTO_TCP* = 6
-
-when defined(linux):
-  const
-    O_CLOEXEC* = 0x80000
-    POSIX_SPAWN_USEVFORK* = 0x40
-elif defined(freebsd):
-  const
-    O_CLOEXEC* = 0x00100000
     POSIX_SPAWN_USEVFORK* = 0x00
-elif defined(openbsd):
-  const
-    O_CLOEXEC* = 0x10000
-    POSIX_SPAWN_USEVFORK* = 0x00
-elif defined(netbsd):
-  const
-    O_CLOEXEC* = 0x00400000
-    POSIX_SPAWN_USEVFORK* = 0x00
-elif defined(dragonfly):
-  const
-    O_CLOEXEC* = 0x00020000
-    POSIX_SPAWN_USEVFORK* = 0x00
-elif defined(macos) or defined(macosx):
-  const
-    POSIX_SPAWN_USEVFORK* = 0x00
+    IPV6_V6ONLY* = 27
 
 when defined(linux) or defined(macos) or defined(macosx) or defined(freebsd) or
      defined(openbsd) or defined(netbsd) or defined(dragonfly):
@@ -1492,6 +1528,8 @@ when defined(posix):
     INVALID_HANDLE_VALUE* = cint(-1)
 
 proc `==`*(x: SocketHandle, y: int): bool = int(x) == y
+when defined(nimdoc):
+  proc `==`*(x: SocketHandle, y: SocketHandle): bool {.borrow.}
 
 when defined(macosx) or defined(macos) or defined(bsd):
   const
@@ -1619,6 +1657,8 @@ elif defined(linux):
     # RTA_PRIORITY* = 6'u16
     RTA_PREFSRC* = 7'u16
     # RTA_METRICS* = 8'u16
+    RTM_NEWLINK* = 16'u16
+    RTM_NEWROUTE* = 24'u16
 
     RTM_F_LOOKUP_TABLE* = 0x1000
 

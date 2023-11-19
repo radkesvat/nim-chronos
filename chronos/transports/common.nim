@@ -11,7 +11,7 @@
 
 import std/[strutils]
 import stew/[base10, byteutils]
-import ".."/[asyncloop, osdefs, oserrno]
+import ".."/[asyncloop, osdefs, oserrno, handles]
 
 from std/net import Domain, `==`, IpAddress, IpAddressFamily, parseIpAddress,
                     SockType, Protocol, Port, `$`
@@ -30,6 +30,9 @@ type
     ## Server's flags
     ReuseAddr, ReusePort, TcpNoDelay, NoAutoRead, GCUserData, FirstPipe,
     NoPipeFlash, Broadcast
+
+  DualStackType* {.pure.} = enum
+    Auto, Enabled, Disabled, Default
 
   AddressFamily* {.pure.} = enum
     None, IPv4, IPv6, Unix
@@ -76,6 +79,7 @@ when defined(windows) or defined(nimdoc):
       asock*: AsyncFD               # Current AcceptEx() socket
       errorCode*: OSErrorCode       # Current error code
       abuffer*: array[128, byte]    # Windows AcceptEx() buffer
+      dualstack*: DualStackType     # IPv4/IPv6 dualstack parameters
       when defined(windows):
         aovl*: CustomOverlapped     # AcceptEx OVERLAPPED structure
 else:
@@ -90,6 +94,7 @@ else:
       bufferSize*: int              # Size of internal transports' buffer
       loopFuture*: Future[void]     # Server's main Future
       errorCode*: OSErrorCode       # Current error code
+      dualstack*: DualStackType     # IPv4/IPv6 dualstack parameters
 
 type
   TransportError* = object of AsyncError
@@ -108,6 +113,8 @@ type
     ## Transport's capability not supported exception
   TransportUseClosedError* = object of TransportError
     ## Usage after transport close exception
+  TransportUseEofError* = object of TransportError
+    ## Usage after transport half-close exception
   TransportTooManyError* = object of TransportError
     ## Too many open file descriptors exception
   TransportAbortedError* = object of TransportError
@@ -194,7 +201,7 @@ proc `$`*(address: TransportAddress): string =
     "None"
 
 proc toHex*(address: TransportAddress): string =
-  ## Returns hexadecimal representation of ``address`.
+  ## Returns hexadecimal representation of ``address``.
   case address.family
   of AddressFamily.IPv4:
     "0x" & address.address_v4.toHex()
@@ -562,11 +569,11 @@ template checkClosed*(t: untyped, future: untyped) =
 
 template checkWriteEof*(t: untyped, future: untyped) =
   if (WriteEof in (t).state):
-    future.fail(newException(TransportError,
+    future.fail(newException(TransportUseEofError,
                              "Transport connection is already dropped!"))
     return future
 
-template getError*(t: untyped): ref CatchableError =
+template getError*(t: untyped): ref TransportError =
   var err = (t).error
   (t).error = nil
   err
@@ -588,22 +595,6 @@ proc raiseTransportOsError*(err: OSErrorCode) {.
     raises: [TransportOsError].} =
   ## Raises transport specific OS error.
   raise getTransportOsError(err)
-
-type
-  SeqHeader = object
-    length, reserved: int
-
-proc isLiteral*(s: string): bool {.inline.} =
-  when defined(gcOrc) or defined(gcArc):
-    false
-  else:
-    (cast[ptr SeqHeader](s).reserved and (1 shl (sizeof(int) * 8 - 2))) != 0
-
-proc isLiteral*[T](s: seq[T]): bool {.inline.} =
-  when defined(gcOrc) or defined(gcArc):
-    false
-  else:
-    (cast[ptr SeqHeader](s).reserved and (1 shl (sizeof(int) * 8 - 2))) != 0
 
 template getTransportTooManyError*(
            code = OSErrorCode(0)
@@ -720,3 +711,75 @@ proc raiseTransportError*(ecode: OSErrorCode) {.
       raise getTransportTooManyError(ecode)
     else:
       raise getTransportOsError(ecode)
+
+proc isAvailable*(family: AddressFamily): bool =
+  case family
+  of AddressFamily.None:
+    raiseAssert "Invalid address family"
+  of AddressFamily.IPv4:
+    isAvailable(Domain.AF_INET)
+  of AddressFamily.IPv6:
+    isAvailable(Domain.AF_INET6)
+  of AddressFamily.Unix:
+    isAvailable(Domain.AF_UNIX)
+
+proc getDomain*(socket: AsyncFD): Result[AddressFamily, OSErrorCode] =
+  ## Returns address family which is used to create socket ``socket``.
+  ##
+  ## Note: `chronos` supports only `AF_INET`, `AF_INET6` and `AF_UNIX` sockets.
+  ## For all other types of sockets this procedure returns
+  ## `EAFNOSUPPORT/WSAEAFNOSUPPORT` error.
+  when defined(windows):
+    let protocolInfo = ? getSockOpt2(socket, cint(osdefs.SOL_SOCKET),
+                                     cint(osdefs.SO_PROTOCOL_INFOW),
+                                     WSAPROTOCOL_INFO)
+    if protocolInfo.iAddressFamily == toInt(Domain.AF_INET):
+      ok(AddressFamily.IPv4)
+    elif protocolInfo.iAddressFamily == toInt(Domain.AF_INET6):
+      ok(AddressFamily.IPv6)
+    else:
+      err(WSAEAFNOSUPPORT)
+  else:
+    var
+      saddr = Sockaddr_storage()
+      slen = SockLen(sizeof(saddr))
+    if getsockname(SocketHandle(socket), cast[ptr SockAddr](addr saddr),
+                   addr slen) != 0:
+      return err(osLastError())
+    if int(saddr.ss_family) == toInt(Domain.AF_INET):
+      ok(AddressFamily.IPv4)
+    elif int(saddr.ss_family) == toInt(Domain.AF_INET6):
+      ok(AddressFamily.IPv6)
+    elif int(saddr.ss_family) == toInt(Domain.AF_UNIX):
+      ok(AddressFamily.Unix)
+    else:
+      err(EAFNOSUPPORT)
+
+proc setDualstack*(socket: AsyncFD, family: AddressFamily,
+                   flag: DualStackType): Result[void, OSErrorCode] =
+  if family == AddressFamily.IPv6:
+    case flag
+    of DualStackType.Auto:
+      # In case of `Auto` we going to ignore all the errors.
+      discard setDualstack(socket, true)
+      ok()
+    of DualStackType.Enabled:
+      ? setDualstack(socket, true)
+      ok()
+    of DualStackType.Disabled:
+      ? setDualstack(socket, false)
+      ok()
+    of DualStackType.Default:
+      ok()
+  else:
+    ok()
+
+proc setDualstack*(socket: AsyncFD,
+                   flag: DualStackType): Result[void, OSErrorCode] =
+  let family =
+    case flag
+    of DualStackType.Auto:
+      getDomain(socket).get(AddressFamily.IPv6)
+    else:
+      ? getDomain(socket)
+  setDualstack(socket, family, flag)

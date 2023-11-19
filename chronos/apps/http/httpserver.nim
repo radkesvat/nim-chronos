@@ -7,10 +7,10 @@
 #  Apache License, version 2.0, (LICENSE-APACHEv2)
 #              MIT license (LICENSE-MIT)
 import std/[tables, uri, strutils]
-import stew/[results, base10], httputils
+import stew/[base10], httputils, results
 import ../../asyncloop, ../../asyncsync
 import ../../streams/[asyncstream, boundstream, chunkstream]
-import httptable, httpcommon, multipart
+import "."/[httptable, httpcommon, multipart]
 export asyncloop, asyncsync, httptable, httpcommon, httputils, multipart,
        asyncstream, boundstream, chunkstream, uri, tables, results
 
@@ -191,7 +191,8 @@ proc new*(htype: typedesc[HttpServerRef],
           backlogSize: int = DefaultBacklogSize,
           httpHeadersTimeout = 10.seconds,
           maxHeadersSize: int = 8192,
-          maxRequestBodySize: int = 1_048_576): HttpResult[HttpServerRef] {.
+          maxRequestBodySize: int = 1_048_576,
+          dualstack = DualStackType.Auto): HttpResult[HttpServerRef] {.
      raises: [].} =
 
   let serverUri =
@@ -206,7 +207,7 @@ proc new*(htype: typedesc[HttpServerRef],
   let serverInstance =
     try:
       createStreamServer(address, flags = socketFlags, bufferSize = bufferSize,
-                         backlog = backlogSize)
+                         backlog = backlogSize, dualstack = dualstack)
     except TransportOsError as exc:
       return err(exc.msg)
     except CatchableError as exc:

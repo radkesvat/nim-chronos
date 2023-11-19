@@ -7,13 +7,13 @@
 #  Apache License, version 2.0, (LICENSE-APACHEv2)
 #              MIT license (LICENSE-MIT)
 import std/[uri, tables, sequtils]
-import stew/[results, base10, base64, byteutils], httputils
+import stew/[base10, base64, byteutils], httputils, results
 import ../../asyncloop, ../../asyncsync
 import ../../streams/[asyncstream, tlsstream, chunkstream, boundstream]
 import httptable, httpcommon, httpagent, httpbodyrw, multipart
 export results, asyncloop, asyncsync, asyncstream, tlsstream, chunkstream,
        boundstream, httptable, httpcommon, httpagent, httpbodyrw, multipart,
-       httputils, uri
+       httputils, uri, results
 export SocketFlags
 
 const
@@ -126,6 +126,7 @@ type
     connectionsCount*: int
     socketFlags*: set[SocketFlags]
     flags*: HttpClientFlags
+    dualstack*: DualStackType
 
   HttpAddress* = object
     id*: string
@@ -263,7 +264,8 @@ proc new*(t: typedesc[HttpSessionRef],
           maxConnections = -1,
           idleTimeout = HttpConnectionIdleTimeout,
           idlePeriod = HttpConnectionCheckPeriod,
-          socketFlags: set[SocketFlags] = {}): HttpSessionRef {.
+          socketFlags: set[SocketFlags] = {},
+          dualstack = DualStackType.Auto): HttpSessionRef {.
      raises: [] .} =
   ## Create new HTTP session object.
   ##
@@ -283,7 +285,8 @@ proc new*(t: typedesc[HttpSessionRef],
     idleTimeout: idleTimeout,
     idlePeriod: idlePeriod,
     connections: initTable[string, seq[HttpClientConnectionRef]](),
-    socketFlags: socketFlags
+    socketFlags: socketFlags,
+    dualstack: dualstack
   )
   res.watcherFut =
     if HttpClientFlag.Http11Pipeline in flags:
@@ -620,7 +623,8 @@ proc connect(session: HttpSessionRef,
     let transp =
       try:
         await connect(address, bufferSize = session.connectionBufferSize,
-                      flags = session.socketFlags)
+                      flags = session.socketFlags,
+                      dualstack = session.dualstack)
       except CancelledError as exc:
         raise exc
       except CatchableError:
