@@ -1,0 +1,105 @@
+AsyncStreamDefaultBufferSize	chronos/streams/asyncstream.html#AsyncStreamDefaultBufferSize	asyncstream: AsyncStreamDefaultBufferSize	
+AsyncStreamDefaultQueueSize	chronos/streams/asyncstream.html#AsyncStreamDefaultQueueSize	asyncstream: AsyncStreamDefaultQueueSize	
+AsyncStreamReaderTrackerName	chronos/streams/asyncstream.html#AsyncStreamReaderTrackerName	asyncstream: AsyncStreamReaderTrackerName	
+AsyncStreamWriterTrackerName	chronos/streams/asyncstream.html#AsyncStreamWriterTrackerName	asyncstream: AsyncStreamWriterTrackerName	
+AsyncStreamError	chronos/streams/asyncstream.html#AsyncStreamError	asyncstream: AsyncStreamError	
+AsyncStreamIncorrectDefect	chronos/streams/asyncstream.html#AsyncStreamIncorrectDefect	asyncstream: AsyncStreamIncorrectDefect	
+AsyncStreamIncompleteError	chronos/streams/asyncstream.html#AsyncStreamIncompleteError	asyncstream: AsyncStreamIncompleteError	
+AsyncStreamLimitError	chronos/streams/asyncstream.html#AsyncStreamLimitError	asyncstream: AsyncStreamLimitError	
+AsyncStreamUseClosedError	chronos/streams/asyncstream.html#AsyncStreamUseClosedError	asyncstream: AsyncStreamUseClosedError	
+AsyncStreamReadError	chronos/streams/asyncstream.html#AsyncStreamReadError	asyncstream: AsyncStreamReadError	
+AsyncStreamWriteError	chronos/streams/asyncstream.html#AsyncStreamWriteError	asyncstream: AsyncStreamWriteError	
+AsyncStreamWriteEOFError	chronos/streams/asyncstream.html#AsyncStreamWriteEOFError	asyncstream: AsyncStreamWriteEOFError	
+AsyncBuffer	chronos/streams/asyncstream.html#AsyncBuffer	asyncstream: AsyncBuffer	
+Pointer	chronos/streams/asyncstream.html#Pointer	WriteType.Pointer	
+Sequence	chronos/streams/asyncstream.html#Sequence	WriteType.Sequence	
+String	chronos/streams/asyncstream.html#String	WriteType.String	
+WriteType	chronos/streams/asyncstream.html#WriteType	asyncstream: WriteType	
+WriteItem	chronos/streams/asyncstream.html#WriteItem	asyncstream: WriteItem	
+Running	chronos/streams/asyncstream.html#Running	AsyncStreamState.Running	
+Error	chronos/streams/asyncstream.html#Error	AsyncStreamState.Error	
+Stopped	chronos/streams/asyncstream.html#Stopped	AsyncStreamState.Stopped	
+Finished	chronos/streams/asyncstream.html#Finished	AsyncStreamState.Finished	
+Closing	chronos/streams/asyncstream.html#Closing	AsyncStreamState.Closing	
+Closed	chronos/streams/asyncstream.html#Closed	AsyncStreamState.Closed	
+AsyncStreamState	chronos/streams/asyncstream.html#AsyncStreamState	asyncstream: AsyncStreamState	
+StreamReaderLoop	chronos/streams/asyncstream.html#StreamReaderLoop	asyncstream: StreamReaderLoop	
+StreamWriterLoop	chronos/streams/asyncstream.html#StreamWriterLoop	asyncstream: StreamWriterLoop	
+AsyncStreamReader	chronos/streams/asyncstream.html#AsyncStreamReader	asyncstream: AsyncStreamReader	
+AsyncStreamWriter	chronos/streams/asyncstream.html#AsyncStreamWriter	asyncstream: AsyncStreamWriter	
+AsyncStream	chronos/streams/asyncstream.html#AsyncStream	asyncstream: AsyncStream	
+AsyncStreamRW	chronos/streams/asyncstream.html#AsyncStreamRW	asyncstream: AsyncStreamRW	
+init	chronos/streams/asyncstream.html#init,typedesc[AsyncBuffer],int	asyncstream: init(t: typedesc[AsyncBuffer]; size: int): AsyncBuffer	
+getBuffer	chronos/streams/asyncstream.html#getBuffer,AsyncBuffer	asyncstream: getBuffer(sb: AsyncBuffer): pointer	
+bufferLen	chronos/streams/asyncstream.html#bufferLen,AsyncBuffer	asyncstream: bufferLen(sb: AsyncBuffer): int	
+getData	chronos/streams/asyncstream.html#getData,AsyncBuffer	asyncstream: getData(sb: AsyncBuffer): pointer	
+dataLen	chronos/streams/asyncstream.html#dataLen.t,AsyncBuffer	asyncstream: dataLen(sb: AsyncBuffer): int	
+`[]`	chronos/streams/asyncstream.html#[],AsyncBuffer,int	asyncstream: `[]`(sb: AsyncBuffer; index: int): byte	
+update	chronos/streams/asyncstream.html#update,AsyncBuffer,int	asyncstream: update(sb: var AsyncBuffer; size: int)	
+wait	chronos/streams/asyncstream.html#wait.t,AsyncBuffer	asyncstream: wait(sb: var AsyncBuffer): untyped	
+transfer	chronos/streams/asyncstream.html#transfer.t,AsyncBuffer	asyncstream: transfer(sb: var AsyncBuffer): untyped	
+forget	chronos/streams/asyncstream.html#forget,AsyncBuffer	asyncstream: forget(sb: var AsyncBuffer)	
+shift	chronos/streams/asyncstream.html#shift,AsyncBuffer,int	asyncstream: shift(sb: var AsyncBuffer; size: int)	
+copyData	chronos/streams/asyncstream.html#copyData,AsyncBuffer,pointer,int,int	asyncstream: copyData(sb: AsyncBuffer; dest: pointer; offset, length: int)	
+upload	chronos/streams/asyncstream.html#upload,ptr.AsyncBuffer,ptr.byte,int	asyncstream: upload(sb: ptr AsyncBuffer; pbytes: ptr byte; nbytes: int): InternalRaisesFuture[\n    void, (CancelledError,)]	
+toDataOpenArray	chronos/streams/asyncstream.html#toDataOpenArray.t,AsyncBuffer	asyncstream: toDataOpenArray(sb: AsyncBuffer): auto	
+toBufferOpenArray	chronos/streams/asyncstream.html#toBufferOpenArray.t,AsyncBuffer	asyncstream: toBufferOpenArray(sb: AsyncBuffer): auto	
+copyOut	chronos/streams/asyncstream.html#copyOut.t,pointer,WriteItem,int	asyncstream: copyOut(dest: pointer; item: WriteItem; length: int)	
+newAsyncStreamIncompleteError	chronos/streams/asyncstream.html#newAsyncStreamIncompleteError	asyncstream: newAsyncStreamIncompleteError(): ref AsyncStreamIncompleteError	
+newAsyncStreamLimitError	chronos/streams/asyncstream.html#newAsyncStreamLimitError	asyncstream: newAsyncStreamLimitError(): ref AsyncStreamLimitError	
+newAsyncStreamUseClosedError	chronos/streams/asyncstream.html#newAsyncStreamUseClosedError	asyncstream: newAsyncStreamUseClosedError(): ref AsyncStreamUseClosedError	
+raiseAsyncStreamUseClosedError	chronos/streams/asyncstream.html#raiseAsyncStreamUseClosedError	asyncstream: raiseAsyncStreamUseClosedError()	
+raiseAsyncStreamLimitError	chronos/streams/asyncstream.html#raiseAsyncStreamLimitError	asyncstream: raiseAsyncStreamLimitError()	
+raiseAsyncStreamIncompleteError	chronos/streams/asyncstream.html#raiseAsyncStreamIncompleteError	asyncstream: raiseAsyncStreamIncompleteError()	
+raiseEmptyMessageDefect	chronos/streams/asyncstream.html#raiseEmptyMessageDefect	asyncstream: raiseEmptyMessageDefect()	
+raiseAsyncStreamWriteEOFError	chronos/streams/asyncstream.html#raiseAsyncStreamWriteEOFError	asyncstream: raiseAsyncStreamWriteEOFError()	
+atEof	chronos/streams/asyncstream.html#atEof,AsyncStreamReader	asyncstream: atEof(rstream: AsyncStreamReader): bool	
+atEof	chronos/streams/asyncstream.html#atEof,AsyncStreamWriter	asyncstream: atEof(wstream: AsyncStreamWriter): bool	
+closed	chronos/streams/asyncstream.html#closed,AsyncStreamRW	asyncstream: closed(rw: AsyncStreamRW): bool	
+finished	chronos/streams/asyncstream.html#finished,AsyncStreamRW	asyncstream: finished(rw: AsyncStreamRW): bool	
+stopped	chronos/streams/asyncstream.html#stopped,AsyncStreamRW	asyncstream: stopped(rw: AsyncStreamRW): bool	
+running	chronos/streams/asyncstream.html#running,AsyncStreamRW	asyncstream: running(rw: AsyncStreamRW): bool	
+failed	chronos/streams/asyncstream.html#failed,AsyncStreamRW	asyncstream: failed(rw: AsyncStreamRW): bool	
+checkStreamClosed	chronos/streams/asyncstream.html#checkStreamClosed.t,untyped	asyncstream: checkStreamClosed(t: untyped)	
+checkStreamFinished	chronos/streams/asyncstream.html#checkStreamFinished.t,untyped	asyncstream: checkStreamFinished(t: untyped)	
+readExactly	chronos/streams/asyncstream.html#readExactly,AsyncStreamReader,pointer,int	asyncstream: readExactly(rstream: AsyncStreamReader; pbytes: pointer; nbytes: int): InternalRaisesFuture[\n    void, (CancelledError, AsyncStreamError)]	
+readOnce	chronos/streams/asyncstream.html#readOnce,AsyncStreamReader,pointer,int	asyncstream: readOnce(rstream: AsyncStreamReader; pbytes: pointer; nbytes: int): InternalRaisesFuture[\n    int, (CancelledError, AsyncStreamError)]	
+readUntil	chronos/streams/asyncstream.html#readUntil,AsyncStreamReader,pointer,int,seq[byte]	asyncstream: readUntil(rstream: AsyncStreamReader; pbytes: pointer; nbytes: int;\n          sep: seq[byte]): InternalRaisesFuture[int,\n    (CancelledError, AsyncStreamError)]	
+readLine	chronos/streams/asyncstream.html#readLine,AsyncStreamReader,int,string	asyncstream: readLine(rstream: AsyncStreamReader; limit = 0; sep = &quot;\r\n&quot;): InternalRaisesFuture[\n    string, (CancelledError, AsyncStreamError)]	
+read	chronos/streams/asyncstream.html#read,AsyncStreamReader	asyncstream: read(rstream: AsyncStreamReader): InternalRaisesFuture[seq[byte],\n    (CancelledError, AsyncStreamError)]	
+read	chronos/streams/asyncstream.html#read,AsyncStreamReader,int	asyncstream: read(rstream: AsyncStreamReader; n: int): InternalRaisesFuture[seq[byte],\n    (CancelledError, AsyncStreamError)]	
+consume	chronos/streams/asyncstream.html#consume,AsyncStreamReader	asyncstream: consume(rstream: AsyncStreamReader): InternalRaisesFuture[int,\n    (CancelledError, AsyncStreamError)]	
+consume	chronos/streams/asyncstream.html#consume,AsyncStreamReader,int	asyncstream: consume(rstream: AsyncStreamReader; n: int): InternalRaisesFuture[int,\n    (CancelledError, AsyncStreamError)]	
+readMessage	chronos/streams/asyncstream.html#readMessage,AsyncStreamReader,ReadMessagePredicate	asyncstream: readMessage(rstream: AsyncStreamReader; pred: ReadMessagePredicate): InternalRaisesFuture[\n    void, (CancelledError, AsyncStreamError)]	
+write	chronos/streams/asyncstream.html#write,AsyncStreamWriter,pointer,int	asyncstream: write(wstream: AsyncStreamWriter; pbytes: pointer; nbytes: int): InternalRaisesFuture[\n    void, (CancelledError, AsyncStreamError)]	
+write	chronos/streams/asyncstream.html#write,AsyncStreamWriter,sinkseq[byte],int	asyncstream: write(wstream: AsyncStreamWriter; sbytes: sink seq[byte]; msglen = -1): InternalRaisesFuture[\n    void, (CancelledError, AsyncStreamError)]	
+write	chronos/streams/asyncstream.html#write,AsyncStreamWriter,sinkstring,int	asyncstream: write(wstream: AsyncStreamWriter; sbytes: sink string; msglen = -1): InternalRaisesFuture[\n    void, (CancelledError, AsyncStreamError)]	
+finish	chronos/streams/asyncstream.html#finish,AsyncStreamWriter	asyncstream: finish(wstream: AsyncStreamWriter): InternalRaisesFuture[void,\n    (CancelledError, AsyncStreamError)]	
+join	chronos/streams/asyncstream.html#join,AsyncStreamRW	asyncstream: join(rw: AsyncStreamRW): InternalRaisesFuture[void, (CancelledError,)]	
+close	chronos/streams/asyncstream.html#close,AsyncStreamRW	asyncstream: close(rw: AsyncStreamRW)	
+closeWait	chronos/streams/asyncstream.html#closeWait,AsyncStreamRW	asyncstream: closeWait(rw: AsyncStreamRW): InternalRaisesFuture[void, void]	
+init	chronos/streams/asyncstream.html#init,AsyncStreamWriter,AsyncStreamWriter,StreamWriterLoop	asyncstream: init(child, wsource: AsyncStreamWriter; loop: StreamWriterLoop;\n     queueSize = AsyncStreamDefaultQueueSize)	
+init	chronos/streams/asyncstream.html#init,AsyncStreamWriter,AsyncStreamWriter,StreamWriterLoop,ref.T	asyncstream: init[T](child, wsource: AsyncStreamWriter; loop: StreamWriterLoop;\n        queueSize = AsyncStreamDefaultQueueSize; udata: ref T)	
+init	chronos/streams/asyncstream.html#init,AsyncStreamReader,AsyncStreamReader,StreamReaderLoop	asyncstream: init(child, rsource: AsyncStreamReader; loop: StreamReaderLoop;\n     bufferSize = AsyncStreamDefaultBufferSize)	
+init	chronos/streams/asyncstream.html#init,AsyncStreamReader,AsyncStreamReader,StreamReaderLoop,ref.T	asyncstream: init[T](child, rsource: AsyncStreamReader; loop: StreamReaderLoop;\n        bufferSize = AsyncStreamDefaultBufferSize; udata: ref T)	
+init	chronos/streams/asyncstream.html#init,AsyncStreamWriter,StreamTransport	asyncstream: init(child: AsyncStreamWriter; tsource: StreamTransport)	
+init	chronos/streams/asyncstream.html#init,AsyncStreamWriter,StreamTransport,ref.T	asyncstream: init[T](child: AsyncStreamWriter; tsource: StreamTransport; udata: ref T)	
+init	chronos/streams/asyncstream.html#init,AsyncStreamWriter,AsyncStreamWriter	asyncstream: init(child, wsource: AsyncStreamWriter)	
+init	chronos/streams/asyncstream.html#init,AsyncStreamWriter,AsyncStreamWriter,ref.T	asyncstream: init[T](child, wsource: AsyncStreamWriter; udata: ref T)	
+init	chronos/streams/asyncstream.html#init,AsyncStreamReader,StreamTransport	asyncstream: init(child: AsyncStreamReader; tsource: StreamTransport)	
+init	chronos/streams/asyncstream.html#init,AsyncStreamReader,StreamTransport,ref.T	asyncstream: init[T](child: AsyncStreamReader; tsource: StreamTransport; udata: ref T)	
+init	chronos/streams/asyncstream.html#init,AsyncStreamReader,AsyncStreamReader	asyncstream: init(child, rsource: AsyncStreamReader)	
+init	chronos/streams/asyncstream.html#init,AsyncStreamReader,AsyncStreamReader,ref.T	asyncstream: init[T](child, rsource: AsyncStreamReader; udata: ref T)	
+newAsyncStreamReader	chronos/streams/asyncstream.html#newAsyncStreamReader,AsyncStreamReader,StreamReaderLoop,ref.T	asyncstream: newAsyncStreamReader[T](rsource: AsyncStreamReader; loop: StreamReaderLoop;\n                        bufferSize = AsyncStreamDefaultBufferSize; udata: ref T): AsyncStreamReader	
+newAsyncStreamReader	chronos/streams/asyncstream.html#newAsyncStreamReader,AsyncStreamReader,StreamReaderLoop	asyncstream: newAsyncStreamReader(rsource: AsyncStreamReader; loop: StreamReaderLoop;\n                     bufferSize = AsyncStreamDefaultBufferSize): AsyncStreamReader	
+newAsyncStreamReader	chronos/streams/asyncstream.html#newAsyncStreamReader,StreamTransport,ref.T	asyncstream: newAsyncStreamReader[T](tsource: StreamTransport; udata: ref T): AsyncStreamReader	
+newAsyncStreamReader	chronos/streams/asyncstream.html#newAsyncStreamReader,StreamTransport	asyncstream: newAsyncStreamReader(tsource: StreamTransport): AsyncStreamReader	
+newAsyncStreamWriter	chronos/streams/asyncstream.html#newAsyncStreamWriter,AsyncStreamWriter,StreamWriterLoop,ref.T	asyncstream: newAsyncStreamWriter[T](wsource: AsyncStreamWriter; loop: StreamWriterLoop;\n                        queueSize = AsyncStreamDefaultQueueSize; udata: ref T): AsyncStreamWriter	
+newAsyncStreamWriter	chronos/streams/asyncstream.html#newAsyncStreamWriter,AsyncStreamWriter,StreamWriterLoop	asyncstream: newAsyncStreamWriter(wsource: AsyncStreamWriter; loop: StreamWriterLoop;\n                     queueSize = AsyncStreamDefaultQueueSize): AsyncStreamWriter	
+newAsyncStreamWriter	chronos/streams/asyncstream.html#newAsyncStreamWriter,StreamTransport,ref.T	asyncstream: newAsyncStreamWriter[T](tsource: StreamTransport; udata: ref T): AsyncStreamWriter	
+newAsyncStreamWriter	chronos/streams/asyncstream.html#newAsyncStreamWriter,StreamTransport	asyncstream: newAsyncStreamWriter(tsource: StreamTransport): AsyncStreamWriter	
+newAsyncStreamWriter	chronos/streams/asyncstream.html#newAsyncStreamWriter,AsyncStreamWriter,ref.T	asyncstream: newAsyncStreamWriter[T](wsource: AsyncStreamWriter; udata: ref T): AsyncStreamWriter	
+newAsyncStreamWriter	chronos/streams/asyncstream.html#newAsyncStreamWriter,AsyncStreamWriter	asyncstream: newAsyncStreamWriter(wsource: AsyncStreamWriter): AsyncStreamWriter	
+newAsyncStreamReader	chronos/streams/asyncstream.html#newAsyncStreamReader,AsyncStreamWriter,ref.T	asyncstream: newAsyncStreamReader[T](rsource: AsyncStreamWriter; udata: ref T): AsyncStreamWriter	
+newAsyncStreamReader	chronos/streams/asyncstream.html#newAsyncStreamReader,AsyncStreamReader	asyncstream: newAsyncStreamReader(rsource: AsyncStreamReader): AsyncStreamReader	
+getUserData	chronos/streams/asyncstream.html#getUserData,AsyncStreamRW	asyncstream: getUserData[T](rw: AsyncStreamRW): T	
