@@ -1920,10 +1920,6 @@ proc createStreamServer*(host: TransportAddress,
           register2(sock).isOkOr:
             raiseTransportOsError(error)
           sock
-      # allowing dual-stack socket 
-      if host.family in {AddressFamily.IPv6}:
-        discard setSockOpt(serverSocket,osdefs.IPPROTO_IPV6,IPV6_V6ONLY,0)
-      
       # SO_REUSEADDR
       if ServerFlags.ReuseAddr in flags:
         setSockOpt2(serverSocket, SOL_SOCKET, SO_REUSEADDR, 1).isOkOr:

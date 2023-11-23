@@ -276,13 +276,7 @@ when defined(windows):
           raiseTransportOsError(error)
         sock
 
-
     ## Apply ServerFlags here
-
-    # allowing dual-stack socket 
-    if local.family in {AddressFamily.IPv6}:
-      discard setSockOpt(localSock,osdefs.IPPROTO_IPV6,IPV6_V6ONLY,0)
-
     if ServerFlags.ReuseAddr in flags:
       setSockOpt2(localSock, SOL_SOCKET, SO_REUSEADDR, 1).isOkOr:
         if sock == asyncInvalidSocket:
